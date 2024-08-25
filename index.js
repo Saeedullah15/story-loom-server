@@ -26,17 +26,25 @@ async function run() {
         // Connect the client to the server	(optional starting in v4.7)
         // await client.connect();
 
+        const storyCollection = client.db("storyLoomDB").collection("storyCollection");
+
         // API's here
-        app.post("/", async (req, res) => {
-
+        app.post("/createStory", async (req, res) => {
+            const newStoryInfo = req.body;
+            const result = await storyCollection.insertOne(newStoryInfo);
+            res.send(result);
         })
 
-        app.get("/", async (req, res) => {
-
+        app.get("/stories", async (req, res) => {
+            const cursor = await storyCollection.find().toArray();
+            res.send(cursor);
         })
 
-        app.get("/", async (req, res) => {
-
+        app.get("/stories/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await storyCollection.findOne(query);
+            res.send(result);
         })
 
         // Send a ping to confirm a successful connection
